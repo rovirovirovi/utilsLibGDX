@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Animation {
 	
-	private int currentFrame;
+	public int currentFrame;
 	private int[] frames;
 	private int speed;
 	private int sprWidth;

@@ -3,6 +3,7 @@ package com.vali.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class Entity {
@@ -17,10 +18,6 @@ public class Entity {
 	Vector2 origin;
 	float width;
 	float height;
-	float bounce;
-	float friction;
-	
-	boolean isStatic;
 	
 	boolean col_top;
 	boolean col_bot;
@@ -39,20 +36,12 @@ public class Entity {
 		tex = new Texture(Gdx.files.internal(path));
 		
 		acceleration = new Vector2();
-		acceleration.x = 0;
-		acceleration.y = 0;
 		
 		velocity = new Vector2();
-		velocity.x = 0;
-		velocity.y = 0;
 		
 		drag = new Vector2();
-		drag.x = 0;
-		drag.y = 0;
 		
 		maxVelocity = new Vector2();
-		maxVelocity.x = 0;
-		maxVelocity.y = 0;
 		
 		width = tex.getWidth();
 		height = tex.getHeight();
@@ -61,9 +50,6 @@ public class Entity {
 		origin.x = x + width / 2;
 		origin.y = y + height / 2;
 		
-		bounce = 0;
-		friction = 0;
-		
 		col_bot = false;
 		col_top = false;
 		col_right = false;
@@ -71,12 +57,11 @@ public class Entity {
 		
 		_flipX = true;
 		_flipY = false;
-		isStatic = false;
+		
 	}
 	public void update(){
 		updateMotion();
 		updateAnimation();
-		
 	}
 	void updateAnimation(){
 		if(currentAnimation != null){
@@ -84,10 +69,8 @@ public class Entity {
 		}
 	}
 	void updateMotion(){
-		if(Math.abs(velocity.x) < maxVelocity.x)
-			velocity.x += acceleration.x * Gdx.graphics.getDeltaTime();
-		if(Math.abs(velocity.y) < maxVelocity.y)
-			velocity.y += acceleration.y * Gdx.graphics.getDeltaTime();
+		velocity.x = MathUtils.clamp(velocity.x, -maxVelocity.x, maxVelocity.x);
+		velocity.y = MathUtils.clamp(velocity.y, -maxVelocity.y, maxVelocity.y);
 		
 		float d = 0;
 		d = drag.x * Gdx.graphics.getDeltaTime();
@@ -160,7 +143,11 @@ public class Entity {
 		currentAnimation = anim;
 	}
 	public void draw(SpriteBatch sb){
-		sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
+		if(currentAnimation != null)
+			sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
+		else{
+			sb.draw(tex,x,y);
+		}
 	}
 	public static Animation addAnimation(Texture tex, int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight){
 		return new Animation(tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight);
