@@ -28,6 +28,7 @@ public class Entity {
 	boolean col_right;
 	
 	Animation currentAnimation;
+	private boolean _facingRight;
 	
 	String name;
 	
@@ -67,6 +68,8 @@ public class Entity {
 		col_top = false;
 		col_right = false;
 		col_left = false;
+		
+		_facingRight = true;
 		
 		isStatic = false;
 	}
@@ -147,11 +150,14 @@ public class Entity {
 		}
 		
 	}
+	public void setFacing(boolean FACING){
+		_facingRight = FACING;
+	}
 	public void playAnimation(Animation anim){
 		currentAnimation = anim;
 	}
 	public void draw(SpriteBatch sb){
-		sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), false, false);
+		sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), !_facingRight, false);
 	}
 	public static Animation addAnimation(Texture tex, int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight){
 		return new Animation(tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight);

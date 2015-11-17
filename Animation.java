@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Animation {
 	
 	private int currentFrame;
-	private String name;
 	private int[] frames;
-	private boolean loop;
-	private Texture tex;
 	private int speed;
 	private int sprWidth;
 	private int sprHeight;
@@ -22,8 +19,6 @@ public class Animation {
 	public Animation( Texture TEX, int[] FRAMES, int SPEED, boolean LOOP,int sw,int sh){
 		currentFrame = 0;
 		frames = FRAMES;
-		loop = LOOP;
-		tex = TEX;
 		speed = SPEED;
 		sprWidth = sw;
 		sprHeight = sh;
@@ -33,7 +28,7 @@ public class Animation {
 		timer += Gdx.graphics.getDeltaTime() * speed;
 		if(timer >= 1f){
 			timer = 0;
-			if(currentFrame >= frames.length - 2)
+			if(currentFrame >= frames.length - 1)
 				currentFrame = 0;
 			else
 				currentFrame++;

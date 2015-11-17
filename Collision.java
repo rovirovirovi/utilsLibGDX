@@ -1,11 +1,16 @@
 package com.vali.game;
 
 public class Collision {
-
-	public static void collide(Entity e1, Entity e2){
-		if (e1.x < e2.x + e2.width && e1.x + e1.width > e2.x
+	
+	public static boolean overlap(Entity e1, Entity e2){
+		return e1.x < e2.x + e2.width
+				&& e1.x + e1.width > e2.x
 				&& e1.y < e2.y + e2.height
-				&& e1.height + e1.y > e2.y) {
+				&& e1.height + e1.y > e2.y;
+	}
+	
+	public static void collide(Entity e1, Entity e2){
+		if (overlap(e1, e2)) {
 			float e1cx = e1.x + e1.width / 2.0f;
 			float e2cx = e2.x + e2.width / 2.0f;
 			float dx = 0;
@@ -33,5 +38,6 @@ public class Collision {
 			e1.simpleCollision(e1, e2, dx, dy);
 		}
 	}
+	
 	
 }
