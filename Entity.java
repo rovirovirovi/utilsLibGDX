@@ -28,8 +28,8 @@ public class Entity {
 	boolean col_right;
 	
 	Animation currentAnimation;
-	private boolean _facingRight;
-	
+	private boolean _flipX;
+	private boolean _flipY;
 	String name;
 	
 	public Entity(float XX,float YY, String path){
@@ -69,8 +69,8 @@ public class Entity {
 		col_right = false;
 		col_left = false;
 		
-		_facingRight = true;
-		
+		_flipX = true;
+		_flipY = false;
 		isStatic = false;
 	}
 	public void update(){
@@ -150,14 +150,17 @@ public class Entity {
 		}
 		
 	}
-	public void setFacing(boolean FACING){
-		_facingRight = FACING;
+	public void setFacingX(boolean FLIP){
+		_flipX = FLIP;
+	}
+	public void setFacingY(boolean FLIP){
+		_flipY = FLIP;
 	}
 	public void playAnimation(Animation anim){
 		currentAnimation = anim;
 	}
 	public void draw(SpriteBatch sb){
-		sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), !_facingRight, false);
+		sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
 	}
 	public static Animation addAnimation(Texture tex, int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight){
 		return new Animation(tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight);
