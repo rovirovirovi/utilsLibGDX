@@ -9,7 +9,7 @@ public class CustomCursor extends Entity{
 	
 	public CustomCursor() {
 		super(0, 0, "crosshair.png");
-		pos = new Vector3();
+		pos = new Vector3(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
 	}
 	public void update(){
 		pos.x = Gdx.input.getX() + Gdx.graphics.getWidth() + width / 2;
