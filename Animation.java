@@ -1,4 +1,4 @@
-package com.vali.game;
+package com.vali.lib;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,6 +11,7 @@ public class Animation {
 	private int speed;
 	private int sprWidth;
 	private int sprHeight;
+	private boolean loop;
 	
 	public TextureRegion tr;
 	
@@ -18,6 +19,7 @@ public class Animation {
 	
 	public Animation( Texture TEX, int[] FRAMES, int SPEED, boolean LOOP,int sw,int sh){
 		currentFrame = 0;
+		loop = LOOP;
 		frames = FRAMES;
 		speed = SPEED;
 		sprWidth = sw;
@@ -29,7 +31,10 @@ public class Animation {
 		if(timer >= 1f){
 			timer = 0;
 			if(currentFrame >= frames.length - 1)
-				currentFrame = 0;
+			{
+				if(loop == true)
+					currentFrame = 0;
+			}
 			else
 				currentFrame++;
 			

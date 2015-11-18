@@ -1,4 +1,4 @@
-package com.vali.game;
+package com.vali.lib;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,15 +9,16 @@ import com.badlogic.gdx.math.Vector2;
 public class Entity {
 	
 	public Texture tex;
-	float x;
-	float y;
-	Vector2 acceleration;
-	Vector2 velocity;
-	Vector2 drag;
-	Vector2 maxVelocity;
-	Vector2 origin;
-	float width;
-	float height;
+	public float x;
+	public float y;
+	public Vector2 acceleration;
+	public Vector2 velocity;
+	public Vector2 drag;
+	public Vector2 maxVelocity;
+	public Vector2 origin;
+	public float width;
+	public float height;
+	public float rotation;
 	
 	boolean col_top;
 	boolean col_bot;
@@ -46,6 +47,7 @@ public class Entity {
 		width = tex.getWidth();
 		height = tex.getHeight();
 		
+		
 		origin = new Vector2();
 		origin.x = x + width / 2;
 		origin.y = y + height / 2;
@@ -63,12 +65,12 @@ public class Entity {
 		updateMotion();
 		updateAnimation();
 	}
-	void updateAnimation(){
+	protected void updateAnimation(){
 		if(currentAnimation != null){
 			currentAnimation.update();
 		}
 	}
-	void updateMotion(){
+	protected void updateMotion(){
 		velocity.x = MathUtils.clamp(velocity.x, -maxVelocity.x, maxVelocity.x);
 		velocity.y = MathUtils.clamp(velocity.y, -maxVelocity.y, maxVelocity.y);
 		
@@ -140,14 +142,20 @@ public class Entity {
 		_flipY = FLIP;
 	}
 	public void playAnimation(Animation anim){
-		currentAnimation = anim;
+		if(currentAnimation != anim)
+		{
+			currentAnimation = anim;
+		}
+	}
+	public void drawSelf(SpriteBatch sb){
+		if(currentAnimation != null)
+			sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth() / 2, (float)currentAnimation.getSpriteHeight() / 2, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), 1, 1, rotation, currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
+		else{
+			sb.draw(tex,x,y,(float)(tex.getWidth() / 2), (float)(tex.getHeight() / 2),(float)tex.getWidth(), (float)tex.getHeight(),1,1,rotation,0,0,tex.getWidth(),tex.getHeight(),_flipX,_flipY);
+		}
 	}
 	public void draw(SpriteBatch sb){
-		if(currentAnimation != null)
-			sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
-		else{
-			sb.draw(tex,x,y);
-		}
+		drawSelf(sb);
 	}
 	public static Animation addAnimation(Texture tex, int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight){
 		return new Animation(tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight);

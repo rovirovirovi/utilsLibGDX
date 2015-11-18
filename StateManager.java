@@ -1,10 +1,12 @@
-package com.vali.game;
+package com.vali.lib;
 
 import java.util.Stack;
 
+import com.vali.game.Playstate;
+
 public class StateManager {
 
-	public Stack<State> states = new Stack<State>();
+	public static Stack<State> states = new Stack<State>();
 	
 	public StateManager(){
 		if(states.isEmpty())
@@ -13,6 +15,11 @@ public class StateManager {
 	public void loadState(State s){
 		states.pop();
 		states.add(s);
+	}
+	public static State getState(){
+		if(!states.isEmpty())
+			return states.peek();
+		return null;
 	}
 	public void resetState(){
 		State s;

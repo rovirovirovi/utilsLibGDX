@@ -1,4 +1,4 @@
-package com.vali.game;
+package com.vali.lib;
 
 public class Collision {
 	

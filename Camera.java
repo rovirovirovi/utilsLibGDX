@@ -1,4 +1,4 @@
-package com.vali.game;
+package com.vali.lib;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -6,18 +6,18 @@ import com.badlogic.gdx.math.Vector3;
 
 public class Camera {
 	
-	OrthographicCamera cam;
-	float x;
-	float y;
+	public OrthographicCamera cam;
+	public float x;
+	public float y;
 	public float rotation = 0;
 	
-	public Camera(float w, float h){
-		cam = new OrthographicCamera(w, h);
-		cam.setToOrtho(false);
+	public Camera(float w, float h, float scale){
+		cam = new OrthographicCamera(w,h);
+		cam.setToOrtho(false,w, h);
 		x = 0;
 		y = 0;
 		cam.position.set(x, y, 0);
-		setZoom(1);
+		setZoom(2);
 		cam.update();
 	}
 	
