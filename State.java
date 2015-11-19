@@ -1,9 +1,9 @@
 package com.vali.lib;
 
-import java.util.ArrayList;
+import java.util.Stack;
 
 public class State {
-	public ArrayList<Entity> entities;
+	public Stack<Entity> entities;
 	public void update(){}
 	public void draw(){}
 	

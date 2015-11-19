@@ -26,8 +26,8 @@ public class Camera {
 		x = (float) Math.floor((double)(target.origin.x)) - cam.viewportWidth / 4 + offsetX;
 		y = (float) Math.floor((double)(target.origin.y));
 		*/
-		x = target.origin.x - cam.viewportWidth / 4 + offsetX;
-		y = target.origin.y + offsetX;
+		x = target.origin.x + offsetX;
+		y = target.origin.y + offsetY;
 	}
 	
 	public Vector3 unproject(Vector3 input){

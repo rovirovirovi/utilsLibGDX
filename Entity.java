@@ -19,18 +19,24 @@ public class Entity {
 	public float width;
 	public float height;
 	public float rotation;
+	public float offsetX;
+	public float offsetY;
+	
 	
 	boolean col_top;
 	boolean col_bot;
 	boolean col_left;
 	boolean col_right;
 	
+	
+	
 	Animation currentAnimation;
 	private boolean _flipX;
 	private boolean _flipY;
 	String name;
+	public String tag;
 	
-	public Entity(float XX,float YY, String path){
+	public Entity(float XX,float YY, String path, float spriteWidth, float spriteHeight){
 		x = XX;
 		y = YY;
 		
@@ -44,8 +50,8 @@ public class Entity {
 		
 		maxVelocity = new Vector2();
 		
-		width = tex.getWidth();
-		height = tex.getHeight();
+		width = spriteWidth;
+		height = spriteHeight;
 		
 		
 		origin = new Vector2();
@@ -102,18 +108,26 @@ public class Entity {
 		origin.y = y + height / 2;
 	}
 	public void simpleCollision(Entity a, Entity b, float dx, float dy) {
+		if(a.tag == "Bullet" && b.tag == "Tile")
+		{
+			StateManager.getState().entities.remove(a);
+			return;
+		}
 		if(Math.abs(dy) < Math.abs(dx) && dy != 0){
 			velocity.y = 0;
 			y += dy;
-			if(dy < 0)
-			{
-				col_top = false;
-				col_bot = false;
-			}
-			else
-			{
-				col_top = false;
-				col_bot = true;
+			if(Math.abs(dy) < 1){
+				if(dy < 0)
+				{
+					col_top = true;
+					col_bot = false;
+					
+				}
+				else
+				{
+					col_top = false;
+					col_bot = true;
+				}
 			}
 			
 		}
@@ -122,15 +136,17 @@ public class Entity {
 		if(Math.abs(dx) < Math.abs(dy) && dx != 0){
 			velocity.x = 0;
 			x += dx;
-			if(dx > 0)
-			{
-				col_right = true;
-				col_left = false;
-			}
-			else
-			{
-				col_right = false;
-				col_left = true;
+			if(Math.abs(dx) < 1){
+				if(dx < 0)
+				{
+					col_right = true;
+					col_left = false;
+				}
+				else
+				{
+					col_right = false;
+					col_left = true;
+				}
 			}
 		}
 		
