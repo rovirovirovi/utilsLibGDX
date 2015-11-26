@@ -22,6 +22,9 @@ public class Entity {
 	public float offsetX;
 	public float offsetY;
 	
+	// NOT TO BE CONFUSED WITH ORIGIN.Y / ORIGIN.Y
+	public float centerX; 
+	public float centerY;
 	
 	boolean col_top;
 	boolean col_bot;
@@ -33,6 +36,8 @@ public class Entity {
 	Animation currentAnimation;
 	private boolean _flipX;
 	private boolean _flipY;
+	private float _scaleX;
+	private float _scaleY;
 	String name;
 	public String tag;
 	
@@ -46,6 +51,9 @@ public class Entity {
 		
 		velocity = new Vector2();
 		
+		_scaleX = 1;
+		_scaleY = 1;
+		
 		drag = new Vector2();
 		
 		maxVelocity = new Vector2();
@@ -57,6 +65,9 @@ public class Entity {
 		origin = new Vector2();
 		origin.x = x + width / 2;
 		origin.y = y + height / 2;
+		
+		centerX = 0;
+		centerY = 0;
 		
 		col_bot = false;
 		col_top = false;
@@ -108,11 +119,7 @@ public class Entity {
 		origin.y = y + height / 2;
 	}
 	public void simpleCollision(Entity a, Entity b, float dx, float dy) {
-		if(a.tag == "Bullet" && b.tag == "Tile")
-		{
-			StateManager.getState().entities.remove(a);
-			return;
-		}
+		
 		if(Math.abs(dy) < Math.abs(dx) && dy != 0){
 			velocity.y = 0;
 			y += dy;
@@ -163,17 +170,30 @@ public class Entity {
 			currentAnimation = anim;
 		}
 	}
+	public void setScaleX(float scale){
+		_scaleX = scale;
+	}
+	public void setScaleY(float scale){
+		_scaleY = scale;
+	}
+	public float getScaleX(){
+		return _scaleX;
+	}
+	public float getScaleY(){
+		return _scaleY;
+	}
+	
 	public void drawSelf(SpriteBatch sb){
 		if(currentAnimation != null)
-			sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth() / 2, (float)currentAnimation.getSpriteHeight() / 2, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), 1, 1, rotation, currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
+			sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth() / 2, (float)currentAnimation.getSpriteHeight() / 2, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), _scaleX, _scaleY, rotation, currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
 		else{
-			sb.draw(tex,x,y,(float)(tex.getWidth() / 2), (float)(tex.getHeight() / 2),(float)tex.getWidth(), (float)tex.getHeight(),1,1,rotation,0,0,tex.getWidth(),tex.getHeight(),_flipX,_flipY);
+			sb.draw(tex,x,y,centerX, centerY,(float)tex.getWidth(), (float)tex.getHeight(),_scaleX,_scaleY,rotation,0,0,tex.getWidth(),tex.getHeight(),_flipX,_flipY);
 		}
 	}
 	public void draw(SpriteBatch sb){
 		drawSelf(sb);
 	}
 	public static Animation addAnimation(Texture tex, int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight){
-		return new Animation(tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight);
+		return new Animation(tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight,null);
 	}
 }

@@ -16,14 +16,16 @@ public class Animation {
 	public TextureRegion tr;
 	
 	private float timer;
+	AnimationCallback callback;
 	
-	public Animation( Texture TEX, int[] FRAMES, int SPEED, boolean LOOP,int sw,int sh){
+	public Animation( Texture TEX, int[] FRAMES, int SPEED, boolean LOOP,int sw,int sh, AnimationCallback callback){
 		currentFrame = 0;
 		loop = LOOP;
 		frames = FRAMES;
 		speed = SPEED;
 		sprWidth = sw;
 		sprHeight = sh;
+		this.callback = callback;
 	}
 	
 	public void update(){
@@ -34,6 +36,8 @@ public class Animation {
 			{
 				if(loop == true)
 					currentFrame = 0;
+				if(callback != null)
+					callback.callback();
 			}
 			else
 				currentFrame++;

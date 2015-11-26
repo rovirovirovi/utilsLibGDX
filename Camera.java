@@ -2,6 +2,7 @@ package com.vali.lib;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 
 public class Camera {
@@ -9,6 +10,8 @@ public class Camera {
 	public OrthographicCamera cam;
 	public float x;
 	public float y;
+	float offsetX;
+	float offsetY;
 	public float rotation = 0;
 	
 	public Camera(float w, float h, float scale){
@@ -20,8 +23,12 @@ public class Camera {
 		setZoom(2);
 		cam.update();
 	}
+	public void shake(float intensity){
+		offsetX = MathUtils.random(-intensity,intensity);
+		offsetY = MathUtils.random(-intensity,intensity);
+	}
 	
-	public void follow(boolean simpleFollow, Entity target, float offsetX, float offsetY){
+	public void follow(boolean simpleFollow, Entity target){
 		/*
 		x = (float) Math.floor((double)(target.origin.x)) - cam.viewportWidth / 4 + offsetX;
 		y = (float) Math.floor((double)(target.origin.y));
@@ -54,7 +61,10 @@ public class Camera {
 	public void setZoom(float ZOOM){
 		cam.zoom = 1f/ZOOM;
 	}
-	
+	public boolean inView(Entity e){
+		return e.x >= x - cam.viewportWidth / 2 && e.x + e.width <= x + cam.viewportWidth / 2 &&
+			   e.y >= y - cam.viewportHeight / 2 && e.y + e.height <= y + cam.viewportHeight / 2;
+	}
 	
 	
 }
