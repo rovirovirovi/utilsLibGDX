@@ -26,11 +26,17 @@ public class Entity {
 	public float centerX; 
 	public float centerY;
 	
-	boolean col_top;
-	boolean col_bot;
-	boolean col_left;
-	boolean col_right;
+	public boolean col_top;
+	public boolean col_bot;
+	public boolean col_left;
+	public boolean col_right;
 	
+	// DONT MODIFY THESE //
+	public static int UP = 0;
+	public static int RIGHT = 1;
+	public static int DOWN = 2;
+	public static int LEFT = 3;
+	// END OF RESTRICTION //
 	
 	
 	Animation currentAnimation;
@@ -82,6 +88,10 @@ public class Entity {
 		updateMotion();
 		updateAnimation();
 	}
+	public void updateSelf(){
+		updateMotion();
+		updateAnimation();
+	}
 	protected void updateAnimation(){
 		if(currentAnimation != null){
 			currentAnimation.update();
@@ -123,7 +133,6 @@ public class Entity {
 		if(Math.abs(dy) < Math.abs(dx) && dy != 0){
 			velocity.y = 0;
 			y += dy;
-			if(Math.abs(dy) < 1){
 				if(dy < 0)
 				{
 					col_top = true;
@@ -135,15 +144,12 @@ public class Entity {
 					col_top = false;
 					col_bot = true;
 				}
-			}
-			
 		}
 		
 		
 		if(Math.abs(dx) < Math.abs(dy) && dx != 0){
 			velocity.x = 0;
 			x += dx;
-			if(Math.abs(dx) < 1){
 				if(dx < 0)
 				{
 					col_right = true;
@@ -154,7 +160,6 @@ public class Entity {
 					col_right = false;
 					col_left = true;
 				}
-			}
 		}
 		
 	}

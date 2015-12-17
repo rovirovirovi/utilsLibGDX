@@ -17,6 +17,7 @@ public class Collision {
 		
 	}
 	
+	
 	public static void collide(Entity e1, Stack<Entity> e2, CollisionCallback callback){
 		for(int i = 0; i < e2.size()-1;i++)
 			if(e1 != null)

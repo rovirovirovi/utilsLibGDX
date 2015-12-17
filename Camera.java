@@ -13,6 +13,21 @@ public class Camera {
 	float offsetX;
 	float offsetY;
 	public float rotation = 0;
+	float tarX, tarY, speed;
+	public boolean canMove = true;
+	
+	public float getX(){
+		return x;
+	}
+	public float getY(){
+		return y;
+	}
+	public void setX(float x){
+		this.x = x;
+	}
+	public void setY(float y){
+		this.y = y;
+	}
 	
 	public Camera(float w, float h, float scale){
 		cam = new OrthographicCamera(w,h);
@@ -20,7 +35,7 @@ public class Camera {
 		x = 0;
 		y = 0;
 		cam.position.set(x, y, 0);
-		setZoom(2);
+		setZoom(4);
 		cam.update();
 	}
 	public void shake(float intensity){
@@ -29,10 +44,6 @@ public class Camera {
 	}
 	
 	public void follow(boolean simpleFollow, Entity target){
-		/*
-		x = (float) Math.floor((double)(target.origin.x)) - cam.viewportWidth / 4 + offsetX;
-		y = (float) Math.floor((double)(target.origin.y));
-		*/
 		x = target.origin.x + offsetX;
 		y = target.origin.y + offsetY;
 	}
@@ -45,6 +56,7 @@ public class Camera {
 		cam.position.set(x,y,0);
 		cam.update();
 	}
+	
 	
 	public void setRotation(float angle){
 		cam.up.set(0,1,0);
@@ -65,6 +77,10 @@ public class Camera {
 		return e.x >= x - cam.viewportWidth / 2 && e.x + e.width <= x + cam.viewportWidth / 2 &&
 			   e.y >= y - cam.viewportHeight / 2 && e.y + e.height <= y + cam.viewportHeight / 2;
 	}
-	
-	
+	public void enableMovement(){
+		canMove = true;
+	}
+	public void disableMovement(){
+		canMove = false;
+	}
 }

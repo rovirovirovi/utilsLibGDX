@@ -2,7 +2,7 @@ package com.vali.lib;
 
 import java.util.Stack;
 
-import com.vali.game.Playstate;
+import com.vali.game.PlayState;
 
 public class StateManager {
 
@@ -10,7 +10,7 @@ public class StateManager {
 	
 	public StateManager(){
 		if(states.isEmpty())
-			states.add(new Playstate());
+			states.add(new PlayState());
 	}
 	public void loadState(State s){
 		states.pop();
