@@ -32,9 +32,9 @@ public class Entity {
 	public boolean col_right;
 	
 	// DONT MODIFY THESE //
-	public static int UP = 0;
+	public static int TOP = 0;
 	public static int RIGHT = 1;
-	public static int DOWN = 2;
+	public static int BOT = 2;
 	public static int LEFT = 3;
 	// END OF RESTRICTION //
 	
@@ -44,15 +44,17 @@ public class Entity {
 	private boolean _flipY;
 	private float _scaleX;
 	private float _scaleY;
-	String name;
-	public String tag;
 	
+	public boolean solid;
+	
+	String name;
+
 	public Entity(float XX,float YY, String path, float spriteWidth, float spriteHeight){
 		x = XX;
 		y = YY;
 		
 		tex = new Texture(Gdx.files.internal(path));
-		
+		solid = true;
 		acceleration = new Vector2();
 		
 		velocity = new Vector2();
@@ -129,7 +131,6 @@ public class Entity {
 		origin.y = y + height / 2;
 	}
 	public void simpleCollision(Entity a, Entity b, float dx, float dy) {
-		
 		if(Math.abs(dy) < Math.abs(dx) && dy != 0){
 			velocity.y = 0;
 			y += dy;
@@ -137,7 +138,6 @@ public class Entity {
 				{
 					col_top = true;
 					col_bot = false;
-					
 				}
 				else
 				{
@@ -145,8 +145,10 @@ public class Entity {
 					col_bot = true;
 				}
 		}
-		
-		
+		else{
+			col_top = false;
+			col_bot = false;
+		}
 		if(Math.abs(dx) < Math.abs(dy) && dx != 0){
 			velocity.x = 0;
 			x += dx;
@@ -161,7 +163,10 @@ public class Entity {
 					col_left = true;
 				}
 		}
-		
+		else{
+			col_right = false;
+			col_left = false;
+		}
 	}
 	public void setFacingX(boolean FLIP){
 		_flipX = FLIP;
@@ -187,7 +192,17 @@ public class Entity {
 	public float getScaleY(){
 		return _scaleY;
 	}
-	
+	public boolean isTouching(int Direction){
+		if(Direction == TOP)
+			return col_top;
+		if(Direction == BOT)
+			return col_bot;
+		if(Direction == LEFT)
+			return col_left;
+		if(Direction == RIGHT)
+			return col_right;
+		return false;
+	}
 	public void drawSelf(SpriteBatch sb){
 		if(currentAnimation != null)
 			sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth() / 2, (float)currentAnimation.getSpriteHeight() / 2, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), _scaleX, _scaleY, rotation, currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);

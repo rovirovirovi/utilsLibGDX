@@ -73,6 +73,9 @@ public class Camera {
 	public void setZoom(float ZOOM){
 		cam.zoom = 1f/ZOOM;
 	}
+	public float getZoom(){
+		return (float)Math.pow(cam.zoom, -1);
+	}
 	public boolean inView(Entity e){
 		return e.x >= x - cam.viewportWidth / 2 && e.x + e.width <= x + cam.viewportWidth / 2 &&
 			   e.y >= y - cam.viewportHeight / 2 && e.y + e.height <= y + cam.viewportHeight / 2;

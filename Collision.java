@@ -27,34 +27,36 @@ public class Collision {
 	}
 	
 	public static void collide(Entity e1, Entity e2, CollisionCallback callback){
-		if (overlap(e1, e2, null)) {
-			if(callback != null)
-				callback.callback(e1, e2);
-			float e1cx = e1.x + e1.offsetX + e1.width / 2.0f;
-			float e2cx = e2.x + e2.offsetX + e2.width / 2.0f;
-			float dx = 0;
-			if (e1cx < e2cx)
-			{
-				dx = e2.x + e2.offsetX - (e1.x + e1.offsetX + e1.width );
-			}
-			else
-			{
-				dx = (e2.x + e2.offsetX + e2.width) - e1.x + e1.offsetX;
-			}
+		if(e1.solid && e2.solid){
+			if (overlap(e1, e2, null)) {
+				if(callback != null)
+					callback.callback(e1, e2);
+				float e1cx = e1.x + e1.offsetX + e1.width / 2.0f;
+				float e2cx = e2.x + e2.offsetX + e2.width / 2.0f;
+				float dx = 0;
+				if (e1cx < e2cx)
+				{
+					dx = e2.x + e2.offsetX - (e1.x + e1.offsetX + e1.width );
+				}
+				else
+				{
+					dx = (e2.x + e2.offsetX + e2.width) - e1.x + e1.offsetX;
+				}
 
-			float e1cy = e1.y + e1.offsetY + e1.height / 2.0f;
-			float e2cy = e2.y + e2.offsetY + e2.height / 2.0f;
-			float dy = 0;
-			if (e1cy < e2cy)
-			{
-				dy = e2.y + e2.offsetY - (e1.y + e1.offsetY + e1.height);
+				float e1cy = e1.y + e1.offsetY + e1.height / 2.0f;
+				float e2cy = e2.y + e2.offsetY + e2.height / 2.0f;
+				float dy = 0;
+				if (e1cy < e2cy)
+				{
+					dy = e2.y + e2.offsetY - (e1.y + e1.offsetY + e1.height);
+				}
+				else
+				{
+					dy = (e2.y + e2.offsetY + e2.height) - e1.y + e1.offsetY;
+				}
+				
+				e1.simpleCollision(e1, e2, dx, dy);
 			}
-			else
-			{
-				dy = (e2.y + e2.offsetY + e2.height) - e1.y + e1.offsetY;
-			}
-			
-			e1.simpleCollision(e1, e2, dx, dy);
 		}
 	}
 
