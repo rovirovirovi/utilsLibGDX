@@ -9,12 +9,22 @@ public class StateManager {
 	public static Stack<State> states = new Stack<State>();
 	
 	public StateManager(){
-		if(states.isEmpty())
-			states.add(new PlayState());
+		
+		PlayState playState = new PlayState();
+		playState.stateManager = this;
+		loadState(playState);
 	}
+	
 	public void loadState(State s){
-		states.pop();
-		states.add(s);
+		s.stateManager = this;
+		if(states.isEmpty()){
+			states.add(s);
+		}
+		else{
+			states.pop();
+			states.add(s);
+		}
+		
 	}
 	public static State getState(){
 		if(!states.isEmpty())
@@ -27,11 +37,14 @@ public class StateManager {
 		loadState(s);
 	}
 	public void update(){
-		if(!states.isEmpty())
-			states.peek().update();
-		if(!states.isEmpty())
-			states.peek().draw();
+			if(!states.isEmpty())
+				states.peek().update();
+			if(!states.isEmpty())
+				states.peek().render();
 	}
-	
+	public void resize(int width, int height){
+		if(!states.isEmpty())
+			states.peek().resize(width, height);
+	}
 	
 }

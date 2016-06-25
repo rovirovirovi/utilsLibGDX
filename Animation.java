@@ -8,7 +8,7 @@ public class Animation {
 	
 	public int currentFrame;
 	private int[] frames;
-	private int speed;
+	private float speed;
 	private int sprWidth;
 	private int sprHeight;
 	private boolean loop;
@@ -18,7 +18,7 @@ public class Animation {
 	private float timer;
 	AnimationCallback callback;
 	
-	public Animation( Texture TEX, int[] FRAMES, int SPEED, boolean LOOP,int sw,int sh, AnimationCallback callback){
+	public Animation( Texture TEX, int[] FRAMES, float SPEED, boolean LOOP,int sw,int sh, AnimationCallback callback){
 		currentFrame = 0;
 		loop = LOOP;
 		frames = FRAMES;
@@ -43,9 +43,12 @@ public class Animation {
 				currentFrame++;
 			
 		}
-		
-		
 	}
+	
+	public void setSpeed(float f){
+		this.speed = f;
+	}
+	
 	public int getSpriteFrame(){
 		return frames[currentFrame] * sprWidth;
 	}

@@ -1,10 +1,15 @@
 package com.vali.lib;
 
+import java.util.Stack;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.vali.game.MyGdxGame;
 
 public class Entity {
 	
@@ -22,38 +27,59 @@ public class Entity {
 	public float offsetX;
 	public float offsetY;
 	
-	// NOT TO BE CONFUSED WITH ORIGIN.Y / ORIGIN.Y
 	public float centerX; 
 	public float centerY;
 	
-	public boolean col_top;
-	public boolean col_bot;
-	public boolean col_left;
-	public boolean col_right;
+	public State currentState;
 	
-	// DONT MODIFY THESE //
-	public static int TOP = 0;
-	public static int RIGHT = 1;
-	public static int BOT = 2;
-	public static int LEFT = 3;
-	// END OF RESTRICTION //
-	
-	
-	Animation currentAnimation;
-	private boolean _flipX;
-	private boolean _flipY;
+	protected Animation currentAnimation;
+	protected boolean _flipX;
+	protected boolean _flipY;
 	private float _scaleX;
 	private float _scaleY;
 	
 	public boolean solid;
 	
-	String name;
-
-	public Entity(float XX,float YY, String path, float spriteWidth, float spriteHeight){
+	public String tag;
+	public boolean visible = true;
+	public boolean alive;
+	public int health = 1;
+	
+	public float currentX;
+	public float currentY;
+	
+	public Color tint;
+	
+	public String name = "";
+	
+	public float getX(){
+		return x;
+	}
+	public float getY(){
+		return y;
+	}
+	public void setX(float x){
+		this.x = x;
+	}
+	public void setY(float y){
+		this.y = y;
+	}
+	
+	public Entity(float XX,float YY, String path){
 		x = XX;
 		y = YY;
+		currentX = x;
+		currentY = y;
 		
-		tex = new Texture(Gdx.files.internal(path));
+		tag = "untagged";
+		
+		if(path != null){
+			
+			//Makes the entity use the loaded texture
+			tex = MyGdxGame.assetManager.get(path, Texture.class);
+		}
+		else
+			tex = null;
 		solid = true;
 		acceleration = new Vector2();
 		
@@ -66,10 +92,16 @@ public class Entity {
 		
 		maxVelocity = new Vector2();
 		
-		width = spriteWidth;
-		height = spriteHeight;
+		if(tex == null){
+			width = 16;
+			height = 16;
+		}
+		else {
+			width = tex.getWidth();
+			height = tex.getWidth();
+		}
 		
-		
+		alive = true;
 		origin = new Vector2();
 		origin.x = x + width / 2;
 		origin.y = y + height / 2;
@@ -77,14 +109,17 @@ public class Entity {
 		centerX = 0;
 		centerY = 0;
 		
-		col_bot = false;
-		col_top = false;
-		col_right = false;
-		col_left = false;
 		
-		_flipX = true;
+		_flipX = false;
 		_flipY = false;
 		
+		tint = Color.WHITE;
+		
+	}
+	public AssetManager getAssetManager(){
+		if(currentState != null)
+			return MyGdxGame.assetManager;
+		return null;
 	}
 	public void update(){
 		updateMotion();
@@ -93,6 +128,17 @@ public class Entity {
 	public void updateSelf(){
 		updateMotion();
 		updateAnimation();
+	}
+	public void updateHealth(){
+		if(health <= 0){
+			removeSelf();
+		}
+	}
+	public void removeSelf(){
+		currentState.remove(this);
+	}
+	public void takeDamage(int value){
+		health -= value;
 	}
 	protected void updateAnimation(){
 		if(currentAnimation != null){
@@ -120,53 +166,28 @@ public class Entity {
 		else
 			velocity.y = 0;
 		
-		x += velocity.x * Gdx.graphics.getDeltaTime();
-		y += velocity.y * Gdx.graphics.getDeltaTime();
-		
-		if(velocity.y != 0)
-		{
-			col_bot = false;
-		}
 		origin.x = x + width / 2;
 		origin.y = y + height / 2;
+		
+		x += velocity.x * Gdx.graphics.getDeltaTime();
+		y += velocity.y * Gdx.graphics.getDeltaTime();
 	}
-	public void simpleCollision(Entity a, Entity b, float dx, float dy) {
-		if(Math.abs(dy) < Math.abs(dx) && dy != 0){
-			velocity.y = 0;
-			y += dy;
-				if(dy < 0)
-				{
-					col_top = true;
-					col_bot = false;
-				}
-				else
-				{
-					col_top = false;
-					col_bot = true;
-				}
-		}
-		else{
-			col_top = false;
-			col_bot = false;
-		}
-		if(Math.abs(dx) < Math.abs(dy) && dx != 0){
+	public void CollideEntity(String TAG, Stack<Entity> stack_to_check) {
+		
+		if(Collision.place_entity(x + velocity.x * Gdx.graphics.getDeltaTime(), y ,width,height, TAG, stack_to_check)){
+			
+			while(!Collision.place_entity(x + Math.signum(velocity.x), y,width,height, TAG, stack_to_check))
+				x += Math.signum(velocity.x);
 			velocity.x = 0;
-			x += dx;
-				if(dx < 0)
-				{
-					col_right = true;
-					col_left = false;
-				}
-				else
-				{
-					col_right = false;
-					col_left = true;
-				}
 		}
-		else{
-			col_right = false;
-			col_left = false;
+		
+		if(Collision.place_entity(x, y + velocity.y * Gdx.graphics.getDeltaTime(), width, height,TAG, stack_to_check)){
+			while(!Collision.place_entity(x, y + Math.signum(velocity.y) ,width, height , TAG, stack_to_check))
+				y += Math.signum(velocity.y);
+			velocity.y = 0;
+
 		}
+		
 	}
 	public void setFacingX(boolean FLIP){
 		_flipX = FLIP;
@@ -178,6 +199,7 @@ public class Entity {
 		if(currentAnimation != anim)
 		{
 			currentAnimation = anim;
+			currentAnimation.currentFrame = 0;
 		}
 	}
 	public void setScaleX(float scale){
@@ -192,28 +214,20 @@ public class Entity {
 	public float getScaleY(){
 		return _scaleY;
 	}
-	public boolean isTouching(int Direction){
-		if(Direction == TOP)
-			return col_top;
-		if(Direction == BOT)
-			return col_bot;
-		if(Direction == LEFT)
-			return col_left;
-		if(Direction == RIGHT)
-			return col_right;
-		return false;
-	}
 	public void drawSelf(SpriteBatch sb){
-		if(currentAnimation != null)
-			sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth() / 2, (float)currentAnimation.getSpriteHeight() / 2, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), _scaleX, _scaleY, rotation, currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
-		else{
-			sb.draw(tex,x,y,centerX, centerY,(float)tex.getWidth(), (float)tex.getHeight(),_scaleX,_scaleY,rotation,0,0,tex.getWidth(),tex.getHeight(),_flipX,_flipY);
+		if(tex != null){
+			if(currentAnimation != null)
+				sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth() / 2, (float)currentAnimation.getSpriteHeight() / 2, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), _scaleX, _scaleY, rotation, currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
+			else{
+				sb.draw(tex,x,y,width / 2, height / 2,(float)tex.getWidth(), (float)tex.getHeight(),_scaleX,_scaleY,rotation,0,0,tex.getWidth(),tex.getHeight(),_flipX,_flipY);
+			}
 		}
 	}
 	public void draw(SpriteBatch sb){
 		drawSelf(sb);
 	}
-	public static Animation addAnimation(Texture tex, int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight){
-		return new Animation(tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight,null);
+	public Animation addAnimation( int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight, AnimationCallback cb){
+		return new Animation(this.tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight,cb);
 	}
+	
 }

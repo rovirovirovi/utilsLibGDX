@@ -42,12 +42,24 @@ public class Camera {
 		offsetX = MathUtils.random(-intensity,intensity);
 		offsetY = MathUtils.random(-intensity,intensity);
 	}
-	
+	public void setOffsetX(float offset){
+		offsetX = offset;
+	}
+	public void setOffsetY(float offset){
+		offsetY = offset;
+	}
 	public void follow(boolean simpleFollow, Entity target){
 		x = target.origin.x + offsetX;
 		y = target.origin.y + offsetY;
 	}
-	
+	public void setPosition(float x, float y){
+		setX(x);
+		setY(y);
+	}
+	public void restrictToBounds(float x, float y, float x2, float y2){
+		this.x = MathUtils.clamp(this.x, x + (Gdx.graphics.getWidth() / 2) / getZoom(), x2 - (Gdx.graphics.getWidth() / 2) / getZoom());
+		this.y = MathUtils.clamp(this.y, y + (Gdx.graphics.getHeight() / 2) / getZoom(), y2 - (Gdx.graphics.getHeight() / 2) / getZoom());
+	}
 	public Vector3 unproject(Vector3 input){
 		return cam.unproject(input);
 	}
@@ -67,14 +79,14 @@ public class Camera {
 	
 	public void rotate(float angle){
 		cam.rotate(angle);
-		rotation += angle * Gdx.graphics.getDeltaTime();
+		rotation += angle;
 	}
 	
 	public void setZoom(float ZOOM){
 		cam.zoom = 1f/ZOOM;
 	}
 	public float getZoom(){
-		return (float)Math.pow(cam.zoom, -1);
+		return (float)(1f/(float)cam.zoom);
 	}
 	public boolean inView(Entity e){
 		return e.x >= x - cam.viewportWidth / 2 && e.x + e.width <= x + cam.viewportWidth / 2 &&
