@@ -1,91 +1,101 @@
 package com.vali.lib;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
 import com.vali.game.MyGdxGame;
 
-public class Button implements InputProcessor{
+public class Button {
 
-	public float x, y, width, height;
 	Texture tex;
-	Camera cam;
-	public Vector3 vec;
-	ButtonCallback callback;
-	float scaleX = 1f, scaleY = 1f, rotation = 0f;
+	Callback callback;
 	public boolean enabled = true;
-	
-	public Button(float x, float y, String path, Camera cam, ButtonCallback cb){
-		tex = MyGdxGame.assetManager.get(path,Texture.class);
+	boolean pressed = false;
+	public float x,y, scaleX = 1, scaleY = 1, rotation = 0;
+	boolean flipX, flipY;
+	private boolean inLerpPos = false, inLerpRot = false;
+	private float lerpPosTargetX, lerpPosTargetY, lerpRotTarget, lerpPosTime, lerpRotTime;
+	boolean isText;
+	Text text;
+	public Button(float x, float y, String imagePath, Callback cb){
+		tex = MyGdxGame.assetManager.get(imagePath, Texture.class);
 		this.x = x;
 		this.y = y;
-		width = tex.getWidth();
-		height = tex.getHeight();
-		this.cam = cam;
 		callback = cb;
-		Gdx.input.setInputProcessor(this);
-		vec = new Vector3(0,0,0);
+		text = null;
 	}
-	public void setCamera(Camera cam){
-		this.cam = cam;
+	public Button(float x, float y, String imagePath, String text, Callback cb){
+		tex = MyGdxGame.assetManager.get(imagePath, Texture.class);
+		this.x = x;
+		this.y = y;
+		callback = cb;
+		this.text = new Text(x + tex.getWidth() / 2,y + tex.getHeight() / 2, 11, text, "fonts/ARCADECLASSIC.TTF");
+		this.text.SetText(text);
+		this.text.center = true;
+	}
+	public void lerpPos(float targetX, float targetY, float time){
+		inLerpPos = true;
+		lerpPosTargetX = targetX;
+		lerpPosTargetY = targetY;
+		lerpPosTime = time;
+	}
+	public void lerpRot(float targetRot, float time){
+		inLerpPos = true;
+		lerpRotTarget = targetRot;
+		lerpRotTime = time;
+	}
+	public void setCallback(Callback callback){
+		this.callback = callback;
 	}
 	public void update(){
-		
+		if(!pressed)
+		{
+			scaleX = 1;
+			scaleY = 1;
+		}
+		else{
+			scaleX = .8f;
+			scaleY = .8f;
+		}
+		if(text != null)
+		{
+			text.SetScale(scaleX);
+		}
+		handleLerp();
+		text.x = x + tex.getWidth() / 2;
+		text.y = y + tex.getHeight() / 2;
+	}
+	private void handleLerp(){
+		if(inLerpPos){
+			x = Utils.lerp(x, lerpPosTargetX, lerpPosTime * Gdx.graphics.getDeltaTime());
+			y = Utils.lerp(y, lerpPosTargetY, lerpPosTime * Gdx.graphics.getDeltaTime());
+			if(x == lerpPosTargetX && y == lerpPosTargetY){
+				inLerpPos = false;
+			}
+		}
+		if(inLerpRot){
+			rotation = Utils.LerpDegrees(rotation, lerpRotTarget, lerpRotTime * Gdx.graphics.getDeltaTime());
+			if(rotation == lerpRotTarget)
+			{
+				inLerpRot = false;
+			}
+		}
 	}
 	public void draw(SpriteBatch sb){
 		if(enabled)
-			sb.draw(tex,x,y,width / 2, height / 2,(float)tex.getWidth(), (float)tex.getHeight(),scaleX,scaleY,rotation,0,0,tex.getWidth(),tex.getHeight(),false,false);
-	}
-	@Override
-	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-			cam.unproject(vec.set(Gdx.input.getX(0), Gdx.input.getY(0),0));
-			if(vec.x >= x && vec.x <= x + width && vec.y >= y && vec.y <= y + height){
-				scaleX = .75f;
-				scaleY = .75f;
+		{
+			sb.draw(tex, x, y,tex.getWidth() / 2, tex.getHeight() / 2, tex.getWidth(), tex.getHeight(), scaleX, scaleY, rotation,0,0,tex.getWidth(),tex.getHeight(),flipX,flipY);
+			if(text != null){
+				text.render(sb);
 			}
-		return false;
+		}
 	}
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-			cam.unproject(vec.set(Gdx.input.getX(0), Gdx.input.getY(0),0));
-			if(vec.x >= x && vec.x <= x + width && vec.y >= y && vec.y <= y + height){
-				scaleX = 1f;
-				scaleY = 1f;
-				callback.callback();
-			}
-		return false;
+	public void press(){
+		pressed = true;
 	}
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-			cam.unproject(vec.set(Gdx.input.getX(0), Gdx.input.getY(0),0));
-		return false;
+	public void unpress(){
+		pressed = false;
+		if(callback != null)
+			callback.callback();
 	}
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
 }

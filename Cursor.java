@@ -36,7 +36,6 @@ public class Cursor {
 		if(draggedEntity != null){
 			draggedEntity.x = x-4;
 			draggedEntity.y = y;
-			
 		}
 		
 	}

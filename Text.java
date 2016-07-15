@@ -16,6 +16,8 @@ public class Text {
 	public String text = "";
 	String font_path;
 	public GlyphLayout glyphLayout;
+	float scale = 1;
+	float r = 1f, g = 1f, b = 1f, a = 1f;
 	
 	public boolean center = false;
 	public Text(float XX, float YY, int size, String text, String font_path){
@@ -28,6 +30,13 @@ public class Text {
 		font = gen.generateFont(par);
 		glyphLayout = new GlyphLayout(font, text);
 		this.text = text;
+	}
+	public void setColor(float r, float g, float b, float a){
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
+		font.setColor(r, g, b, a);
 	}
 	public void setPos(float x, float y){
 		this.x = x;
@@ -46,10 +55,11 @@ public class Text {
 		return y;
 	}
 	public void render(SpriteBatch sb){
+		
 		if(!center)
 			font.draw(sb,text, x, y);
 		else
-			font.draw(sb,text, x - glyphLayout.width / 2, y);
+			font.draw(sb,text, x - (glyphLayout.width / 2) * scale, y);
 	}
 	public void SetText(String Text){
 		text = Text;
@@ -57,6 +67,7 @@ public class Text {
 	}
 	public void SetScale(float scale){
 		font.getData().setScale(scale);
+		this.scale = scale;
 	}
 	
 }

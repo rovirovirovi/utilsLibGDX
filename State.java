@@ -3,25 +3,36 @@ package com.vali.lib;
 import java.util.Stack;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.sun.java.swing.plaf.windows.resources.windows;
-import com.vali.game.items.Item;
 
 public class State {
 	public Stack<Entity> entities;
 	public Stack<Text> text;
-	public Stack<Item> tiles;
+	public Stack<Entity> tiles;
 	public Stack<Entity> particles;
 	public Camera cam;
 	public StateManager stateManager;
 	public Cursor cursor;
+	public SpriteBatch sb;
+	public UI ui;
+	public InputMultiplexer inputMultiplexer;
 	public void init(){
 		entities = new Stack<Entity>();
 		particles = new Stack<Entity>();
 		text = new Stack<Text>();
-		tiles = new Stack<Item>();
+		tiles = new Stack<Entity>();
 		cam = new Camera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1);
+		sb = new SpriteBatch();
 		cursor = new Cursor(cam);
+		ui = new UI(cursor);
+		inputMultiplexer = new InputMultiplexer();
+		inputMultiplexer.addProcessor(ui);
+		Gdx.input.setInputProcessor(inputMultiplexer);
+	}
+	public void addInputManager(InputProcessor ip){
+		inputMultiplexer.addProcessor(ip);
 	}
 	public void setStateManager(StateManager sm){
 		stateManager = sm;
@@ -31,7 +42,9 @@ public class State {
 		cursor.update();
 		for(int i = 0; i < entities.size(); i++){
 			if(entities.get(i) != null){
-				entities.get(i).update();
+				if(entities.get(i).alive){
+					entities.get(i).update();
+				}
 			}
 		}
 		for(int i = 0; i < particles.size(); i++){
@@ -39,6 +52,7 @@ public class State {
 				particles.get(i).update();
 			}
 		}
+		ui.update();
 	}
 	public void loadState(State s){
 		stateManager.loadState(s);
@@ -66,11 +80,14 @@ public class State {
 		for(int i = 0; i < entities.size(); i++){
 			if(entities.get(i) != null){
 				if(inView(entities.get(i).x,entities.get(i).y,entities.get(i).width,entities.get(i).height))
-					entities.get(i).draw(sb);
+					if(entities.get(i).alive)
+						entities.get(i).draw(sb);
 			}
 		}
 		
-
+		cam.update();
+		ui.render(sb);
+		cursor.render(sb);
 	}
 	public void add(Entity e){
 		if(entities == null){

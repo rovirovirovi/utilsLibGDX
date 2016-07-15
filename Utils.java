@@ -1,7 +1,16 @@
 package com.vali.lib;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+
 public class Utils {
 
+	
+	
+	public static void prepareRender(float r, float g, float b, float a){
+		Gdx.gl.glClearColor(r/255f , g/255f, b/255f, a);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	}
 	public static float lerp(float a, float b, float f) 
 	{
 	    return (a * (1.0f - f)) + (b * f);

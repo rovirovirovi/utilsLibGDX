@@ -140,6 +140,9 @@ public class Entity {
 	public void takeDamage(int value){
 		health -= value;
 	}
+	public void takeDamage(int value, int knockbackDirection){
+		health -= value;
+	}
 	protected void updateAnimation(){
 		if(currentAnimation != null){
 			currentAnimation.update();
@@ -173,21 +176,17 @@ public class Entity {
 		y += velocity.y * Gdx.graphics.getDeltaTime();
 	}
 	public void CollideEntity(String TAG, Stack<Entity> stack_to_check) {
-		
 		if(Collision.place_entity(x + velocity.x * Gdx.graphics.getDeltaTime(), y ,width,height, TAG, stack_to_check)){
 			
 			while(!Collision.place_entity(x + Math.signum(velocity.x), y,width,height, TAG, stack_to_check))
 				x += Math.signum(velocity.x);
 			velocity.x = 0;
 		}
-		
 		if(Collision.place_entity(x, y + velocity.y * Gdx.graphics.getDeltaTime(), width, height,TAG, stack_to_check)){
 			while(!Collision.place_entity(x, y + Math.signum(velocity.y) ,width, height , TAG, stack_to_check))
 				y += Math.signum(velocity.y);
 			velocity.y = 0;
-
 		}
-		
 	}
 	public void setFacingX(boolean FLIP){
 		_flipX = FLIP;
@@ -226,7 +225,7 @@ public class Entity {
 	public void draw(SpriteBatch sb){
 		drawSelf(sb);
 	}
-	public Animation addAnimation( int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight, AnimationCallback cb){
+	public Animation addAnimation( int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight, Callback cb){
 		return new Animation(this.tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight,cb);
 	}
 	

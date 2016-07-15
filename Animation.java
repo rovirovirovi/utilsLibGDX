@@ -16,9 +16,9 @@ public class Animation {
 	public TextureRegion tr;
 	
 	private float timer;
-	AnimationCallback callback;
+	Callback callback;
 	
-	public Animation( Texture TEX, int[] FRAMES, float SPEED, boolean LOOP,int sw,int sh, AnimationCallback callback){
+	public Animation( Texture TEX, int[] FRAMES, float SPEED, boolean LOOP,int sw,int sh, Callback callback){
 		currentFrame = 0;
 		loop = LOOP;
 		frames = FRAMES;

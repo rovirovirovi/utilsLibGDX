@@ -1,6 +1,6 @@
 package com.vali.lib;
 
-public interface AnimationCallback {
+public interface Callback {
 
 	public void callback();
 	
