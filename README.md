@@ -21,7 +21,7 @@ Example:
 ```java
 StateManager sm;  
   
-...java  
+...
   
 sm = new StateManager();  
 sm.loadState(new PlayState());  
