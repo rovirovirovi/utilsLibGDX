@@ -18,15 +18,13 @@ Just put all the files in a folder inside your src(where you have all of your co
 In your main file, add a variable of type "StateManager", initialize it, load a state, and in the render function remove everything and just call the update function of the StateManager variable you created earlier.  
 You should know that the StateManager's update function calls both the update and the render function of the state that's loaded.  
 Example:  
-```
+```java
 StateManager sm;  
   
-...  
+...java  
   
 sm = new StateManager();  
 sm.loadState(new PlayState());  
-  
-...  
   
 sm.update();  
 ```
@@ -40,7 +38,7 @@ In the constructor, call the function init(). What that does is initialize most 
 After that, add a update and render function ( they don't need any parameters ). These functions are going to be called by the state manager if you loaded the state and called update there.  
   
 In the update function of the state, it's very important you call updateObjects(). That function is going to update everything in your state.  
-```
+```java
 void update(){
   ... (your code)  
     
@@ -50,7 +48,7 @@ void update(){
 ```
   
 In the render function, call glClearColor and glClear, like you usually do in the main file of your game.  Also, this is where you'll want to set the projection matrix of the spriteBatch. Be aware that there is already a spriteBatch and a camera created in the State file by default, which are both initialized in the init() function.
-```
+```java
 void render(){  
   Gdx.gl.glClearColor(20f/255f , 27f/255f, 36f/255f, 1);  
 	Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);  
@@ -66,36 +64,32 @@ The renderObjects() function I called there draws all the entities, gui objects 
 
 ###Cameras
 The "cam" variable is already in the main State file, and is initialized when you call init(), so use it if you want. If you want to create another camera, just do  
-```
+```java
 Camera camera2;  
   
-... 
-  
 camera2.update();  
-  
-...  
   
 sb.setProjectionMatrix(camera2.cam.combined);  
 ```
 If you want the camera to follow an entity, or just look at something, just change it's position using the setPosition() function.  
-```
+```java
 cam.setPosition(position x, position y);  
 ```
   
 You can also restrict it's position within a rectangle using the restrictToBounds function.  
-```
+```java
 cam.restrictToBounds(bottom left x, bottom left y, top right x, top right y);
 ```
   
 ###Entities
 Again, this stuff is fairly easy to use.  
 First, create a class and call it whatever you want and make it extend the type Entity. I'll be naming it "Player".  
-```
+```java
 public class Player extends Entity {  
 ```
   
 The constructor has to be made like this:  
-```
+```java
 public Player(float x, float y){  
   super(x,y, *string containing the path to the sprite of this entity*);  
   ... (your code)  
@@ -104,7 +98,7 @@ public Player(float x, float y){
 You need those two parameters, which will give this entity's initial position, but after you can add whatever else you need after them ( or before).  
   
 Every entity needs an update and a draw function ( yes, entities have draw functions not render functions, sorry).  
-```
+```java
 public void update(){
   ... (your code)  
   updateSelf();
@@ -117,7 +111,7 @@ public void draw(SpriteBatch sb){
 The updateSelf function calculates stuff like velocity and updates the current animation that the entity is using (if any). Likewise, the drawSelf function handles drawing either a single image or an animation if provided.  
   
 Finally, to make the entity appear in a state, in your state file ( the one you created earlier if you followed what's written at the States section), call the add() function.  
-```
+```java
 (inside of your state file)  
 add(new Player(position x, position y));  
 ```
@@ -130,14 +124,14 @@ Alright, let's begin.
   
 First, create a new variable of type Animation in your entity class. Let's call it "anim_idle".  
   
-```
+```java
 Animation anim_idle;  
 ```
   
 The fun part is the initialization of the variable, as that is where you'll specify things like the frames of the animation and the speed, whether it loops or not, and a callback to be called at the end of the animation.  
   
 To initialize it, you won't be using the new Animation command. Instead, you'll be using the addAnimation() function.  
-```
+```java
 anim_idle = addAnimation(new int[]{0,1,2,3}, 8, true, 16, 16, null);  
 ```
   
@@ -152,7 +146,7 @@ Next, the two ints. Those two are the size of every sprite part of the animation
 And lastly, the last parameter is the callback that's going to be called at the end of the animation. If you don't want a callback, just put null.  
   
 Also, to make the entity play the animation you've just created, call playAnimation().  
-```
+```java
 playAnimation(anim_idle);  
 ```
 The only parameter this function uses is an animation.  
