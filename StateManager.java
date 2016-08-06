@@ -2,17 +2,12 @@ package com.vali.lib;
 
 import java.util.Stack;
 
-import com.vali.game.PlayState;
-
 public class StateManager {
 
 	public static Stack<State> states = new Stack<State>();
 	
 	public StateManager(){
 		
-		PlayState playState = new PlayState();
-		playState.stateManager = this;
-		loadState(playState);
 	}
 	
 	public void loadState(State s){

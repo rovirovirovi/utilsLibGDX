@@ -17,7 +17,7 @@ public class Cursor {
 	boolean bind = false;
 	Camera cam;
 	public Entity draggedEntity;
-	
+	public boolean visible = true;
 	public Cursor(Camera cam){
 		tex = MyGdxGame.assetManager.get("cursor_icon.png", Texture.class);
 		this.cam = cam;
@@ -55,7 +55,8 @@ public class Cursor {
 		bind = true;
 	}
 	public void render(SpriteBatch sb){
-		sb.draw(tex, tx+cam.x, ty+cam.y);
+		if(visible)
+			sb.draw(tex, tx+cam.x, ty+cam.y);
 	}
 	
 	

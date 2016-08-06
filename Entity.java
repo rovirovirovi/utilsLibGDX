@@ -16,7 +16,6 @@ public class Entity {
 	public Texture tex;
 	public float x;
 	public float y;
-	public Vector2 acceleration;
 	public Vector2 velocity;
 	public Vector2 drag;
 	public Vector2 maxVelocity;
@@ -81,7 +80,6 @@ public class Entity {
 		else
 			tex = null;
 		solid = true;
-		acceleration = new Vector2();
 		
 		velocity = new Vector2();
 		

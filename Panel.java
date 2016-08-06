@@ -58,7 +58,8 @@ public class Panel {
 			y = Utils.lerp(y, lerpPosTargetY, lerpPosTime * Gdx.graphics.getDeltaTime());
 			if(x == lerpPosTargetX && y == lerpPosTargetY){
 				inLerpPos = false;
-				posCallback.callback();
+				if(posCallback != null)
+					posCallback.callback();
 			}
 		}
 		if(inLerpRot){
@@ -66,7 +67,8 @@ public class Panel {
 			if(rotation == lerpRotTarget)
 			{
 				inLerpRot = false;
-				rotCallback.callback();
+				if(rotCallback != null)
+					rotCallback.callback();
 			}
 		}
 		if(inLerpCol){
@@ -74,11 +76,11 @@ public class Panel {
 			colG = Utils.lerp(colG, lerpColTargetG, lerpColTime * Gdx.graphics.getDeltaTime());
 			colB = Utils.lerp(colB, lerpColTargetB, lerpColTime * Gdx.graphics.getDeltaTime());
 			colA = Utils.lerp(colA, lerpColTargetA, lerpColTime * Gdx.graphics.getDeltaTime());
-			System.out.println(colA);
 			
 			if(colR == lerpColTargetR && colG == lerpColTargetG && colB == lerpColTargetB && ((lerpColTargetA > colA && colA > lerpColTargetA - .005f) || (lerpColTargetA < colA && colA < lerpColTargetA + .005f))){
 				inLerpCol = false;
-				colCallback.callback();
+				if(colCallback != null)
+					colCallback.callback();
 			}
 		}
 	}

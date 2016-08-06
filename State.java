@@ -11,7 +11,7 @@ public class State {
 	public Stack<Entity> entities;
 	public Stack<Text> text;
 	public Stack<Entity> tiles;
-	public Stack<Entity> particles;
+	public Stack<Particle> particles;
 	public Camera cam;
 	public StateManager stateManager;
 	public Cursor cursor;
@@ -20,7 +20,7 @@ public class State {
 	public InputMultiplexer inputMultiplexer;
 	public void init(){
 		entities = new Stack<Entity>();
-		particles = new Stack<Entity>();
+		particles = new Stack<Particle>();
 		text = new Stack<Text>();
 		tiles = new Stack<Entity>();
 		cam = new Camera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1);
@@ -39,20 +39,22 @@ public class State {
 	}
 	public void update(){}
 	public void updateObjects(){
-		cursor.update();
-		for(int i = 0; i < entities.size(); i++){
-			if(entities.get(i) != null){
-				if(entities.get(i).alive){
-					entities.get(i).update();
+		if(Gdx.graphics.getDeltaTime() < 0.03f){
+			cursor.update();
+			for(int i = 0; i < entities.size(); i++){
+				if(entities.get(i) != null){
+					if(entities.get(i).alive){
+						entities.get(i).update();
+					}
 				}
 			}
-		}
-		for(int i = 0; i < particles.size(); i++){
-			if(particles.get(i) != null){
-				particles.get(i).update();
+			for(int i = 0; i < particles.size(); i++){
+				if(particles.get(i) != null){
+					particles.get(i).update();
+				}
 			}
+			ui.update();
 		}
-		ui.update();
 	}
 	public void loadState(State s){
 		stateManager.loadState(s);
@@ -67,11 +69,7 @@ public class State {
 	}
 	public void renderObjects(SpriteBatch sb){
 		
-		for(int i = 0; i < particles.size(); i++){
-			if(particles.get(i) != null){
-				particles.get(i).draw(sb);
-			}
-		}
+		
 		for(int i = 0; i < tiles.size(); i++){
 			if(tiles.get(i) != null){
 				tiles.get(i).draw(sb);
@@ -84,8 +82,17 @@ public class State {
 						entities.get(i).draw(sb);
 			}
 		}
-		
-		cam.update();
+		for(int i = 0; i < particles.size(); i++){
+			if(particles.get(i) != null){
+				if(particles.get(i).alive)
+					particles.get(i).draw(sb);
+				else
+				{
+					particles.remove(i);
+				}
+			}
+			
+		}
 		ui.render(sb);
 		cursor.render(sb);
 	}

@@ -15,6 +15,7 @@ public class Camera {
 	public float rotation = 0;
 	float tarX, tarY, speed;
 	public boolean canMove = true;
+	float shakeVelocity = 0;
 	
 	public float getX(){
 		return x;
@@ -39,8 +40,7 @@ public class Camera {
 		cam.update();
 	}
 	public void shake(float intensity){
-		offsetX = MathUtils.random(-intensity,intensity);
-		offsetY = MathUtils.random(-intensity,intensity);
+		shakeVelocity = intensity;
 	}
 	public void setOffsetX(float offset){
 		offsetX = offset;
@@ -49,8 +49,8 @@ public class Camera {
 		offsetY = offset;
 	}
 	public void follow(boolean simpleFollow, Entity target){
-		x = target.origin.x + offsetX;
-		y = target.origin.y + offsetY;
+		x = target.origin.x;
+		y = target.origin.y;
 	}
 	public void setPosition(float x, float y){
 		setX(x);
@@ -65,7 +65,20 @@ public class Camera {
 	}
 	
 	public void update(){
-		cam.position.set(x,y,0);
+		offsetX = MathUtils.random(-shakeVelocity,shakeVelocity);
+		offsetY = MathUtils.random(-shakeVelocity,shakeVelocity);
+		shakeVelocity -= Gdx.graphics.getDeltaTime() * 5;
+		shakeVelocity = MathUtils.clamp(shakeVelocity, 0, 100);
+		
+		float decX = x - (int)x;
+		float decY = y - (int)y;
+		
+		if(decX > .9f)
+			x = MathUtils.round(x);
+		if(decY > .9f)
+			y = MathUtils.round(y);
+		
+		cam.position.set(x + offsetX,y + offsetY,0);
 		cam.update();
 	}
 	
