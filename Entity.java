@@ -141,6 +141,9 @@ public class Entity {
 	public void takeDamage(int value, int knockbackDirection){
 		health -= value;
 	}
+	public void takeDamage(int value, Entity source){
+		health -= value;
+	}
 	protected void updateAnimation(){
 		if(currentAnimation != null){
 			currentAnimation.update();

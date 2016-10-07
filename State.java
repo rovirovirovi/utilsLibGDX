@@ -6,6 +6,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
+import com.vali.game.MyGdxGame;
+
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 
 public class State {
 	public Stack<Entity> entities;
@@ -18,18 +24,30 @@ public class State {
 	public SpriteBatch sb;
 	public UI ui;
 	public InputMultiplexer inputMultiplexer;
+	
+	com.badlogic.gdx.physics.box2d.World lightWorld;
+	public RayHandler rayHandler;
+	public Stack<PointLight> lights;
+	
 	public void init(){
 		entities = new Stack<Entity>();
 		particles = new Stack<Particle>();
 		text = new Stack<Text>();
 		tiles = new Stack<Entity>();
-		cam = new Camera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 1);
+		lights = new Stack<PointLight>();
+		cam = new Camera(MyGdxGame.VIRTUAL_WIDTH, MyGdxGame.VIRTUAL_HEIGHT, 1);
 		sb = new SpriteBatch();
 		cursor = new Cursor(cam);
 		ui = new UI(cursor);
+		
 		inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(ui);
 		Gdx.input.setInputProcessor(inputMultiplexer);
+		
+		RayHandler.useDiffuseLight(true);
+		lightWorld = new World(new Vector2(0, 0), true);
+		rayHandler = new RayHandler(lightWorld);
+		rayHandler.setAmbientLight(.2f, .2f, .4f, .1f);
 	}
 	public void addInputManager(InputProcessor ip){
 		inputMultiplexer.addProcessor(ip);
@@ -41,6 +59,7 @@ public class State {
 	public void updateObjects(){
 		if(Gdx.graphics.getDeltaTime() < 0.03f){
 			cursor.update();
+			ui.update();
 			for(int i = 0; i < entities.size(); i++){
 				if(entities.get(i) != null){
 					if(entities.get(i).alive){
@@ -53,7 +72,7 @@ public class State {
 					particles.get(i).update();
 				}
 			}
-			ui.update();
+			
 		}
 	}
 	public void loadState(State s){
@@ -63,10 +82,17 @@ public class State {
 	public void renderText(SpriteBatch sb){
 		for(int i = 0; i < text.size(); i++){
 			if(text.get(i) != null){
-				text.get(i).render(sb);
+				text.get(i).draw(sb);
 			}
 		}
 	}
+	
+	public void drawLights()
+	{
+		rayHandler.setCombinedMatrix(cam.cam);
+		rayHandler.updateAndRender();
+	}
+	
 	public void renderObjects(SpriteBatch sb){
 		
 		
@@ -96,6 +122,17 @@ public class State {
 		ui.render(sb);
 		cursor.render(sb);
 	}
+	
+	public void removeLights(){
+		for(int i = 0; i < lights.size(); i++){
+			if(lights.get(i) != null)
+			{
+				lights.get(i).remove(false);
+				lights.get(i).dispose();
+			}
+		}
+	}
+	
 	public void add(Entity e){
 		if(entities == null){
 			entities = new Stack<Entity>();
@@ -105,10 +142,10 @@ public class State {
 		
 	}
 	public boolean inView(float x, float y, float w, float h){
-		if(x + w > cam.getX() - (Gdx.graphics.getWidth() / 2) / cam.getZoom() && 
-			x < cam.getX() + (Gdx.graphics.getWidth() / 2) / cam.getZoom() &&
-			y + h > cam.getY() - (Gdx.graphics.getHeight() / 2) / cam.getZoom() && 
-			y < cam.getY() + (Gdx.graphics.getHeight() / 2) / cam.getZoom())
+		if(x + w > cam.getX() - (MyGdxGame.VIRTUAL_WIDTH / 2) / cam.getZoom() && 
+			x < cam.getX() + (MyGdxGame.VIRTUAL_WIDTH / 2) / cam.getZoom() &&
+			y + h > cam.getY() - (MyGdxGame.VIRTUAL_HEIGHT / 2) / cam.getZoom() && 
+			y < cam.getY() + (MyGdxGame.VIRTUAL_HEIGHT / 2) / cam.getZoom())
 			return true;
 		return false;
 	}
@@ -120,9 +157,18 @@ public class State {
 			}
 		}
 	}
-	public void resize(int width, int height) {}
+	public void resize(int width, int height) {
+	}
 	
 	public void print(Object obj){
 		System.out.println(obj);
+	}
+	
+	public Entity getEntityWithTag(String tag){
+		for(int i = 0; i < entities.size(); i++){
+			if(entities.get(i).tag == tag)
+				return entities.get(i);
+		}
+		return null;
 	}
 }

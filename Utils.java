@@ -16,7 +16,7 @@ public class Utils {
 	    return (a * (1.0f - f)) + (b * f);
 	}
 	public static float distance(float xa, float ya, float xb, float yb){
-		return (float) Math.sqrt(((xb - xa) * (xb - xa) + (yb - ya) + (yb - ya)));
+		return (float) Math.sqrt(((xb - xa) * (xb - xa) + (yb - ya) * (yb - ya)));
 	}
 	public static float LerpDegrees(float start, float end, float amount)
     {

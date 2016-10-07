@@ -22,12 +22,19 @@ public class Particle {
 	public float x, y, scale = 1, angularVelocity, angularDrag, rotation;
 	public Vector2 velocity, drag;
 	boolean flipX, flipY;
+	int srcX, srcWidth;
+	
+	boolean gravityEnabled = false;
+	
+	
 	public Particle(float x, float y, String path) {
 		this.x = x;
 		this.y = y;
 		tex = MyGdxGame.assetManager.get(path, Texture.class);
 		drag = new Vector2();
 		velocity = new Vector2();
+		srcX = 0;
+		srcWidth = tex.getWidth();
 	}
 	public Particle(float x, float y, String path, float velocityX, float velocityY) {
 		this.x = x;
@@ -37,6 +44,8 @@ public class Particle {
 		velocity = new Vector2();
 		velocity.x = velocityX;
 		velocity.y = velocityY;
+		srcX = 0;
+		srcWidth = tex.getWidth();
 	}
 	public Particle(float x, float y, String path, float velocityX, float velocityY, float dragX, float dragY) {
 		this.x = x;
@@ -48,10 +57,21 @@ public class Particle {
 		velocity.y = velocityY;
 		drag.x = dragX;
 		drag.y = dragY;
+		srcX = 0;
+		srcWidth = tex.getWidth();
+	}
+	public void setSrcX(int srcX){
+		this.srcX = srcX;
+	}
+	public void setSrcWidth(int srcWidth){
+		this.srcWidth = srcWidth;
 	}
 	public void update(){
-		updateVelocity();
 		updateUtils();
+		updateVelocity();
+	}
+	public void enableGravity(boolean enabled){
+		gravityEnabled = enabled;
 	}
 	public void setLifeTime(float time){
 		lifeTime = time;
@@ -77,6 +97,9 @@ public class Particle {
 		}
 		if(timer_destroy >= lifeTime)
 			alive = false;
+		
+		if(gravityEnabled)
+			velocity.y -= 440 * Gdx.graphics.getDeltaTime();
 	}
 	void updateVelocity(){
 		float d = drag.x * Gdx.graphics.getDeltaTime();
@@ -113,7 +136,7 @@ public class Particle {
 		{
 			
 			sb.setColor(1,1,1,alpha);
-			sb.draw(tex, x, y, tex.getWidth() / 2, tex.getHeight() / 2, tex.getWidth(), tex.getHeight(), scale, scale, rotation, 0, 0, tex.getWidth(), tex.getHeight(), flipX, flipY);
+			sb.draw(tex, x, y, srcWidth / 2, tex.getHeight() / 2, srcWidth, tex.getHeight(), scale, scale, rotation, srcX, 0, srcWidth, tex.getHeight(), flipX, flipY);
 			sb.setColor(1,1,1,1);
 		}
 	}

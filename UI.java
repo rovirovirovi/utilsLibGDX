@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class UI implements InputProcessor{
 
 	public Stack<Button> buttonStack;
+	public Stack<Text> textStack;
 	public Stack<Panel> panelStack;
 	public Stack<Gauge> gaugeStack;
 	public Cursor cursor;
@@ -17,6 +18,7 @@ public class UI implements InputProcessor{
 	public UI(Cursor cursor){
 		this.cursor = cursor;
 		buttonStack = new Stack<Button>();
+		textStack = new  Stack<Text>();
 		panelStack = new Stack<Panel>();
 		gaugeStack = new Stack<Gauge>();
 	}
@@ -24,6 +26,9 @@ public class UI implements InputProcessor{
 	public void addButton(Button button)
 	{
 		buttonStack.add(button);
+	}
+	public void addText(Text text){
+		textStack.add(text);
 	}
 	public void addPanel(Panel panel)
 	{
@@ -96,6 +101,9 @@ public class UI implements InputProcessor{
 		for(int i = 0; i < buttonStack.size(); i++){
 			buttonStack.get(i).draw(sb);
 		}
+		for(int i = 0; i < textStack.size(); i++){
+			textStack.get(i).draw(sb);
+		}
 		for(int i = 0; i < panelStack.size(); i++){
 			panelStack.get(i).draw(sb);
 		}
@@ -105,6 +113,9 @@ public class UI implements InputProcessor{
 	}
 	
 	public void update(){
+		for(int i = 0; i < textStack.size(); i++){
+			textStack.get(i).update();
+		}
 		for(int i = 0; i < buttonStack.size(); i++){
 			buttonStack.get(i).update();
 		}

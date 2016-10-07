@@ -2,12 +2,15 @@ package com.vali.lib;
 
 import java.util.Stack;
 
+import com.vali.game.MyGdxGame;
+
 public class StateManager {
 
 	public static Stack<State> states = new Stack<State>();
 	
-	public StateManager(){
-		
+	MyGdxGame mainClass;
+	public StateManager(MyGdxGame mainClass){
+		this.mainClass = mainClass;
 	}
 	
 	public void loadState(State s){
@@ -19,7 +22,8 @@ public class StateManager {
 			states.pop();
 			states.add(s);
 		}
-		
+		if(!(s instanceof EmptyState))
+			mainClass.changedState();
 	}
 	public static State getState(){
 		if(!states.isEmpty())

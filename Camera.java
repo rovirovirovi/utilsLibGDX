@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.vali.game.MyGdxGame;
 
 public class Camera {
 	
@@ -16,6 +17,11 @@ public class Camera {
 	float tarX, tarY, speed;
 	public boolean canMove = true;
 	float shakeVelocity = 0;
+	
+	public boolean inLerp;
+	private float lerpTargetX, lerpTargetY;
+	Callback lerpCallback;
+	float lerpTime;
 	
 	public float getX(){
 		return x;
@@ -52,13 +58,31 @@ public class Camera {
 		x = target.origin.x;
 		y = target.origin.y;
 	}
+	public void lerpPos(float targetX, float targetY, float time, Callback cb){
+		inLerp = true;
+		lerpTargetX = targetX;
+		lerpTargetY = targetY;
+		lerpTime = time;
+		lerpCallback = cb;
+	}
+	private void handleLerp(){
+		if(inLerp){
+			x = Utils.lerp(x, lerpTargetX, lerpTime * Gdx.graphics.getDeltaTime());
+			y = Utils.lerp(y, lerpTargetY, lerpTime * Gdx.graphics.getDeltaTime());
+			if(Math.abs(x) - Math.abs(lerpTargetX) < 5 && Math.abs(y) - Math.abs(lerpTargetY) < 5){
+				inLerp = false;
+				if(lerpCallback != null)
+					lerpCallback.callback();
+			}
+		}
+	}
 	public void setPosition(float x, float y){
 		setX(x);
 		setY(y);
 	}
 	public void restrictToBounds(float x, float y, float x2, float y2){
-		this.x = MathUtils.clamp(this.x, x + (Gdx.graphics.getWidth() / 2) / getZoom(), x2 - (Gdx.graphics.getWidth() / 2) / getZoom());
-		this.y = MathUtils.clamp(this.y, y + (Gdx.graphics.getHeight() / 2) / getZoom(), y2 - (Gdx.graphics.getHeight() / 2) / getZoom());
+		this.x = MathUtils.clamp(this.x, x + (MyGdxGame.VIRTUAL_WIDTH / 2) / getZoom(), x2 - (MyGdxGame.VIRTUAL_WIDTH / 2) / getZoom());
+		this.y = MathUtils.clamp(this.y, y + (MyGdxGame.VIRTUAL_HEIGHT / 2) / getZoom(), y2 - (MyGdxGame.VIRTUAL_HEIGHT / 2) / getZoom());
 	}
 	public Vector3 unproject(Vector3 input){
 		return cam.unproject(input);
@@ -73,12 +97,12 @@ public class Camera {
 		float decX = x - (int)x;
 		float decY = y - (int)y;
 		
-		if(decX > .9f)
 			x = MathUtils.round(x);
-		if(decY > .9f)
 			y = MathUtils.round(y);
-		
-		cam.position.set(x + offsetX,y + offsetY,0);
+			
+			handleLerp();
+			cam.position.set(x + offsetX,y + offsetY,0);
+			
 		cam.update();
 	}
 	

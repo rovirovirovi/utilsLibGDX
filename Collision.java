@@ -2,6 +2,8 @@ package com.vali.lib;
 
 import java.util.Stack;
 
+import com.badlogic.gdx.math.MathUtils;
+
 public class Collision {
 	
 	
@@ -17,6 +19,10 @@ public class Collision {
 		return false;
 	}
 	
+	public static boolean overlap_entity(Entity e1, Entity e2){
+		 return (e2.x + e2.width > e1.x && e2.x < e1.x + e1.width &&
+			e2.y + e2.height > e1.y && e2.y < e1.y + e1.height);
+	}
 	
 	public static Entity get_entity_at(float x, float y, String TAG, Stack<Entity> stack){
 		for(int i = 0; i < stack.size(); i++){

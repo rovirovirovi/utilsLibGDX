@@ -86,7 +86,7 @@ public class Button {
 		{
 			sb.draw(tex, x, y,tex.getWidth() / 2, tex.getHeight() / 2, tex.getWidth(), tex.getHeight(), scaleX, scaleY, rotation,0,0,tex.getWidth(),tex.getHeight(),flipX,flipY);
 			if(text != null){
-				text.render(sb);
+				text.draw(sb);
 			}
 		}
 	}

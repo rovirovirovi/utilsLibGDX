@@ -11,7 +11,7 @@ public class Panel {
 	public Texture tex;
 	public float x,y, scaleX = 1, scaleY = 1, rotation = 0;
 	boolean flipX, flipY;
-	private float colR = 1f, colG = 1f, colB = 1f, colA = 1f;
+	public float colR = 1f, colG = 1f, colB = 1f, colA = 1f;
 	private boolean inLerpPos = false, inLerpRot = false, inLerpCol = false;
 	private float lerpPosTargetX, lerpPosTargetY, lerpRotTarget, lerpPosTime, lerpRotTime, lerpColTargetR, lerpColTargetG, lerpColTargetB, lerpColTargetA, lerpColTime;
 	private Callback colCallback, posCallback, rotCallback;
