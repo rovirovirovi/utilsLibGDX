@@ -15,17 +15,17 @@ public class Particle {
 	float timer_destroy = 0;
 	public boolean fade, scaleDown;
 	float alpha = 1f;
-	boolean alive = true;
+	public boolean alive = true;
 	float initScale = 1;
 	
 	Texture tex;
 	public float x, y, scale = 1, angularVelocity, angularDrag, rotation;
 	public Vector2 velocity, drag;
-	boolean flipX, flipY;
+ 	public boolean flipX, flipY;
 	int srcX, srcWidth;
 	
 	boolean gravityEnabled = false;
-	
+	protected Animation currentAnimation;
 	
 	public Particle(float x, float y, String path) {
 		this.x = x;
@@ -69,6 +69,7 @@ public class Particle {
 	public void update(){
 		updateUtils();
 		updateVelocity();
+		updateAnimation();
 	}
 	public void enableGravity(boolean enabled){
 		gravityEnabled = enabled;
@@ -131,13 +132,37 @@ public class Particle {
 		
 		rotation += angularVelocity * Gdx.graphics.getDeltaTime();
 	}
+	
+	public void setFlipX(boolean flip){
+		flipX = flip;
+	}
+	
+	public void playAnimation(Animation anim){
+		if(currentAnimation != anim)
+		{
+			currentAnimation = anim;
+			currentAnimation.currentFrame = 0;
+		}
+	}
 	public void draw(SpriteBatch sb){
 		if(tex != null)
 		{
-			
 			sb.setColor(1,1,1,alpha);
-			sb.draw(tex, x, y, srcWidth / 2, tex.getHeight() / 2, srcWidth, tex.getHeight(), scale, scale, rotation, srcX, 0, srcWidth, tex.getHeight(), flipX, flipY);
+			if(currentAnimation != null)
+				sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth() / 2, (float)currentAnimation.getSpriteHeight() / 2, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), scale, scale, rotation, currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), flipX, flipY);
+			else
+				sb.draw(tex, x, y, srcWidth / 2, tex.getHeight() / 2, srcWidth, tex.getHeight(), scale, scale, rotation, srcX, 0, srcWidth, tex.getHeight(), flipX, flipY);
 			sb.setColor(1,1,1,1);
 		}
+	}
+	
+	protected void updateAnimation(){
+		if(currentAnimation != null){
+			currentAnimation.update();
+		}
+	}
+	
+	public Animation addAnimation( int[] FRAMES, int speed, boolean LOOP, int spriteWidth, int spriteHeight, Callback cb){
+		return new Animation(this.tex,FRAMES,speed,LOOP,spriteWidth, spriteHeight,cb);
 	}
 }

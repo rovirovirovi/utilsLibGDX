@@ -2,6 +2,7 @@ package com.vali.lib;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.vali.game.MyGdxGame;
 
 public class Utils {
 
@@ -11,8 +12,25 @@ public class Utils {
 		Gdx.gl.glClearColor(r/255f , g/255f, b/255f, a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
-	public static float lerp(float a, float b, float f) 
+	public static void prepareRender3D(){
+		Gdx.gl.glViewport(0, 0, MyGdxGame.VIRTUAL_WIDTH,  MyGdxGame.VIRTUAL_HEIGHT);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+	}
+	public static float AngleClamp(float angle, float min, float max)
 	{
+	    if (angle > max && angle < 360 - min) {
+	        if (angle > 180) {
+	            angle = 360 - min;
+	        } else {
+	            angle = max;
+	        }
+	    }
+
+	    return angle;
+	}
+	public static float lerp(float a, float b, float f){
 	    return (a * (1.0f - f)) + (b * f);
 	}
 	public static float distance(float xa, float ya, float xb, float yb){

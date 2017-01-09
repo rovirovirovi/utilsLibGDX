@@ -3,6 +3,7 @@ package com.vali.lib;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.vali.game.MyGdxGame;
 
@@ -11,6 +12,10 @@ public class Camera {
 	public OrthographicCamera cam;
 	public float x;
 	public float y;
+	
+	Vector2 pos;
+	Vector2 targetPos;
+	
 	float offsetX;
 	float offsetY;
 	public float rotation = 0;
@@ -31,14 +36,18 @@ public class Camera {
 	}
 	public void setX(float x){
 		this.x = x;
+		this.pos.x = x;
 	}
 	public void setY(float y){
 		this.y = y;
+		this.pos.y = y;
 	}
 	
 	public Camera(float w, float h, float scale){
 		cam = new OrthographicCamera(w,h);
 		cam.setToOrtho(false,w, h);
+		pos = new Vector2();
+		targetPos = new Vector2();
 		x = 0;
 		y = 0;
 		cam.position.set(x, y, 0);
@@ -57,6 +66,11 @@ public class Camera {
 	public void follow(boolean simpleFollow, Entity target){
 		x = target.origin.x;
 		y = target.origin.y;
+	}
+	public void followAdvanced(Entity target){
+		targetPos.x = target.x + target.width/2;
+		targetPos.y = target.y + target.height / 2;
+		pos = pos.lerp(targetPos, Gdx.graphics.getDeltaTime() * 30);
 	}
 	public void lerpPos(float targetX, float targetY, float time, Callback cb){
 		inLerp = true;
@@ -91,18 +105,18 @@ public class Camera {
 	public void update(){
 		offsetX = MathUtils.random(-shakeVelocity,shakeVelocity);
 		offsetY = MathUtils.random(-shakeVelocity,shakeVelocity);
-		shakeVelocity -= Gdx.graphics.getDeltaTime() * 5;
+		shakeVelocity -= Gdx.graphics.getDeltaTime() * 10;
 		shakeVelocity = MathUtils.clamp(shakeVelocity, 0, 100);
 		
 		float decX = x - (int)x;
 		float decY = y - (int)y;
 		
-			x = MathUtils.round(x);
-			y = MathUtils.round(y);
 			
 			handleLerp();
-			cam.position.set(x + offsetX,y + offsetY,0);
+			cam.position.set(pos.x + offsetX, pos.y + offsetY,0);
 			
+			x = pos.x;
+			y = pos.y;
 		cam.update();
 	}
 	

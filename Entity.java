@@ -43,6 +43,7 @@ public class Entity {
 	public boolean visible = true;
 	public boolean alive;
 	public int health = 1;
+	public boolean canCollide = true;
 	
 	public float currentX;
 	public float currentY;
@@ -64,9 +65,9 @@ public class Entity {
 		this.y = y;
 	}
 	
-	public Entity(float XX,float YY, String path){
-		x = XX;
-		y = YY;
+	public Entity(float x,float y, String path){
+		this.x = x;
+		this.y = y;
 		currentX = x;
 		currentY = y;
 		
@@ -138,7 +139,7 @@ public class Entity {
 	public void takeDamage(int value){
 		health -= value;
 	}
-	public void takeDamage(int value, int knockbackDirection){
+	public void takeDamage(int value, float knockbackDirection){
 		health -= value;
 	}
 	public void takeDamage(int value, Entity source){
@@ -177,14 +178,14 @@ public class Entity {
 		y += velocity.y * Gdx.graphics.getDeltaTime();
 	}
 	public void CollideEntity(String TAG, Stack<Entity> stack_to_check) {
-		if(Collision.place_entity(x + velocity.x * Gdx.graphics.getDeltaTime(), y ,width,height, TAG, stack_to_check)){
+		if(Collision.place_entity(x + offsetX + velocity.x * Gdx.graphics.getDeltaTime(), y + offsetY ,width,height, TAG, stack_to_check)){
 			
-			while(!Collision.place_entity(x + Math.signum(velocity.x), y,width,height, TAG, stack_to_check))
+			while(!Collision.place_entity(x + offsetX + Math.signum(velocity.x), y + offsetY,width,height, TAG, stack_to_check))
 				x += Math.signum(velocity.x);
 			velocity.x = 0;
 		}
-		if(Collision.place_entity(x, y + velocity.y * Gdx.graphics.getDeltaTime(), width, height,TAG, stack_to_check)){
-			while(!Collision.place_entity(x, y + Math.signum(velocity.y) ,width, height , TAG, stack_to_check))
+		if(Collision.place_entity(x + offsetX, y + offsetY + velocity.y * Gdx.graphics.getDeltaTime(), width, height,TAG, stack_to_check)){
+			while(!Collision.place_entity(x + offsetX, y + offsetY + Math.signum(velocity.y) ,width, height , TAG, stack_to_check))
 				y += Math.signum(velocity.y);
 			velocity.y = 0;
 		}
@@ -219,7 +220,7 @@ public class Entity {
 			if(currentAnimation != null)
 				sb.draw(tex, x, y, (float)currentAnimation.getSpriteWidth() / 2, (float)currentAnimation.getSpriteHeight() / 2, (float)currentAnimation.getSpriteWidth(), (float)currentAnimation.getSpriteHeight(), _scaleX, _scaleY, rotation, currentAnimation.getSpriteFrame(), 0, (int)currentAnimation.getSpriteWidth(), (int)currentAnimation.getSpriteHeight(), _flipX, _flipY);
 			else{
-				sb.draw(tex,x,y,width / 2, height / 2,(float)tex.getWidth(), (float)tex.getHeight(),_scaleX,_scaleY,rotation,0,0,tex.getWidth(),tex.getHeight(),_flipX,_flipY);
+				sb.draw(tex, x, y, tex.getWidth()/2, tex.getHeight()/2, tex.getWidth(), tex.getHeight(), _scaleX, _scaleY, rotation, 0, 0, tex.getWidth(), tex.getHeight(), _flipX, _flipY);
 			}
 		}
 	}
